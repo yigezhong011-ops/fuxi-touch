@@ -198,8 +198,8 @@ jobs:
         with:
           name: fuxi-boot-image-${{ github.run_attempt }}
           path: |
-            boot.img
-            boot.json
+            ${{ runner.temp }}/image/boot.img
+            ${{ runner.temp }}/image/boot.json
           if-no-files-found: error
           retention-days: 3
 
