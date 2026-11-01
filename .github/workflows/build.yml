@@ -193,27 +193,16 @@ jobs:
             --dtb "$GITHUB_WORKSPACE/uefi-fuxi/Platforms/Xiaomi/fuxiPkg/FdtBlob/sm8550-xiaomi-fuxi.dtb" \
             -o "$RUNNER_TEMP/image/boot.img"
           cat "$RUNNER_TEMP/image/boot.json"
-      - name: Encrypt the boot image
-        run: |
-          # The image carries the prelinked Apple kernelcache, so it leaves the runner only encrypted to the owner's key.
-          openssl="$(brew --prefix openssl@3)/bin/openssl"
-          cd "$RUNNER_TEMP/image"
-          shasum -a 256 boot.img | sed 's#  .*#  boot.img#' > boot.img.sha256
-          "$openssl" rand -hex 32 > boot.key
-          "$openssl" enc -aes-256-cbc -pbkdf2 -iter 200000 -salt -in boot.img -out boot.img.enc -pass file:boot.key
-          "$openssl" pkeyutl -encrypt -pubin -inkey "$GITHUB_WORKSPACE/fuxi/ci/boot-image-recipient.pem" \
-            -pkeyopt rsa_padding_mode:oaep -pkeyopt rsa_oaep_md:sha256 -in boot.key -out boot.key.enc
-          rm -f boot.key boot.img
-          mkdir -p "$RUNNER_TEMP/encrypted"
-          mv boot.img.enc boot.key.enc boot.img.sha256 boot.json "$RUNNER_TEMP/encrypted/"
-          ls -l "$RUNNER_TEMP/encrypted"
-      - name: Upload the encrypted boot image
+      - name: Upload the boot image
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: fuxi-boot-image-encrypted-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/encrypted/*
+          name: fuxi-boot-image-${{ github.run_attempt }}
+          path: |
+            boot.img
+            boot.json
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 3
+
       - name: Collect the text logs
         if: always()
         run: |
