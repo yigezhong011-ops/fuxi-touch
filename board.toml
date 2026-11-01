@@ -82,7 +82,7 @@ volume = "FUXIESP"
 size_mib = 192
 loader = "firmware"
 title = "UniXNU"
-panic_screen = true
+panic_screen = false                  # the UEFI font is not fetched in CI
 # -v, serial=3, debug=0x14e and kt_fixed_zones=120 as on UniXNU-sheng and the other SM8550 ports. fuxi-touch=3: touch
 # rails, QUP clocks, pins, GENI SPI, controller reset and chip id; fuxi-touch-panic=1 then panics with the probe's four
 # diagnostic rows as the message, so the result can be read from the panic screen.
