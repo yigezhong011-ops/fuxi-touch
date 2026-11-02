@@ -38,9 +38,10 @@ jobs:
       - name: Mount and convert
         run: |
           set -euo pipefail
-          mkdir -p mnt out
+          mkdir -p mnt
           hdiutil attach -nobrowse -readonly -mountpoint mnt os.dmg
           ls mnt | head -20
+          # the script refuses an existing output directory, so do not create out here
           python3 ci/make-wallpaper-overlay.py mnt out
           ls -l out
           hdiutil detach mnt || true
